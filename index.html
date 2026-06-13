@@ -11,11 +11,7 @@
             --bg: #f8fafc;
             --text: #1e293b;
         }
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg);
@@ -42,9 +38,7 @@
             border-bottom: 3px solid var(--accent);
             padding-bottom: 8px;
         }
-        .form-group {
-            margin-bottom: 20px;
-        }
+        .form-group { margin-bottom: 20px; }
         label {
             display: block;
             margin-bottom: 8px;
@@ -60,7 +54,6 @@
             font-size: 16px;
             color: var(--text);
             background-color: #fff;
-            transition: border-color 0.2s;
         }
         select:focus, input[type="number"]:focus {
             border-color: var(--accent);
@@ -72,24 +65,11 @@
             border-radius: 8px;
             margin-top: 5px;
         }
-        .radio-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        .radio-group { display: flex; flex-direction: column; gap: 10px; }
         .radio-group label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 0;
-            font-weight: normal;
-            cursor: pointer;
+            display: flex; align-items: center; gap: 8px; margin-bottom: 0; font-weight: normal; cursor: pointer;
         }
-        .radio-group input[type="radio"] {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--accent);
-        }
+        .radio-group input[type="radio"] { width: 18px; height: 18px; accent-color: var(--accent); }
         .result-box {
             margin-top: 25px;
             background: #f0fdf4;
@@ -98,32 +78,16 @@
             border: 1px solid #bbf7d0;
         }
         .result-title {
-            font-weight: bold;
-            color: var(--primary);
-            margin-bottom: 12px;
-            font-size: 15px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-weight: bold; color: var(--primary); margin-bottom: 12px; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px;
         }
         .result-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px dashed #cbd5e1;
-            font-size: 16px;
+            display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #cbd5e1; font-size: 16px;
         }
-        .result-item:last-child {
-            border-bottom: none;
-        }
-        .highlight {
-            font-weight: 700;
-            color: #047857;
-        }
-        .info-text {
-            font-size: 12px;
-            color: #64748b;
-            text-align: center;
-            margin-top: 15px;
+        .result-item:last-child { border-bottom: none; }
+        .highlight { font-weight: 700; color: #047857; }
+        .info-text { font-size: 12px; color: #64748b; text-align: center; margin-top: 15px; }
+        .oil-custom-box {
+            background: #eff6ff; padding: 15px; border-radius: 8px; border: 1px solid #bfdbfe; margin-top: 10px;
         }
     </style>
 </head>
@@ -148,14 +112,20 @@
         <div class="radio-box">
             <div class="radio-group">
                 <label>
-                    <input type="radio" name="oilType" value="2L" checked onchange="calculate()"> 
-                    ২ লিটার বোতল (১৮ লিটার অর্থাৎ ৯ বোতল কার্টুন)
+                    <input type="radio" name="oilType" value="2L" checked onchange="handleOilTypeChange()"> 
+                    ২ লিটার বোতল (১৮ লিঃ কার্টুন)
                 </label>
                 <label>
-                    <input type="radio" name="oilType" value="1L" onchange="calculate()"> 
-                    ১ লিটার বোতল (১৬ লিটার কার্টুন)
+                    <input type="radio" name="oilType" value="1L" onchange="handleOilTypeChange()"> 
+                    ১ লিটার বোতল (১৬ লিঃ কার্টুন)
                 </label>
             </div>
+        </div>
+
+        <div id="oil-custom-input-block" class="oil-custom-box" style="margin-top: 15px;">
+            <label style="color: #1e40af;" for="user-2l-cartons">২ লিটার কার্টুন কতটি দিতে চান?</label>
+            <input type="number" id="user-2l-cartons" placeholder="কার্টুন সংখ্যা লিখুন" min="0" oninput="calculate()">
+            <span id="max-2l-hint" style="font-size: 12px; color: #1d4ed8; display: block; margin-top: 5px;"></span>
         </div>
     </div>
 
@@ -166,17 +136,38 @@
 
     <div class="result-box">
         <div class="result-title">হিসাবের ফলাফল:</div>
-        <div class="result-item">
-            <span>মোট পরিমাণ:</span>
-            <span id="res-total" class="highlight">-</span>
+        <div id="standard-results">
+            <div class="result-item">
+                <span>মোট পরিমাণ:</span>
+                <span id="res-total" class="highlight">-</span>
+            </div>
+            <div class="result-item">
+                <span id="res-pack-label">পূর্ণ বস্তা:</span>
+                <span id="res-bags" class="highlight">-</span>
+            </div>
+            <div class="result-item">
+                <span id="res-rem-label">অবशिष्ट কেজি:</span>
+                <span id="res-rem" class="highlight">-</span>
+            </div>
         </div>
-        <div class="result-item">
-            <span id="res-pack-label">পূর্ণ বস্তা:</span>
-            <span id="res-bags" class="highlight">-</span>
-        </div>
-        <div class="result-item">
-            <span id="res-rem-label">অবশিষ্ট কেজি:</span>
-            <span id="res-rem" class="highlight">-</span>
+        
+        <div id="oil-advanced-results" style="display: none;">
+            <div class="result-item">
+                <span>মোট পরিমাণ:</span>
+                <span id="oil-total" class="highlight">-</span>
+            </div>
+            <div class="result-item">
+                <span>২ লিটার কার্টুন (১৮ লিঃ):</span>
+                <span id="oil-2l-cartons" class="highlight">-</span>
+            </div>
+            <div class="result-item">
+                <span>১ লিটার কার্টুন (১৬ লিঃ):</span>
+                <span id="oil-1l-cartons" class="highlight">-</span>
+            </div>
+            <div class="result-item">
+                <span>অবশিষ্ট খুচরা তেল:</span>
+                <span id="oil-rem-bottles" class="highlight">-</span>
+            </div>
         </div>
     </div>
     
@@ -192,56 +183,118 @@
         if (product === 'oil') {
             oilBlock.style.display = 'block';
             inputLabel.innerText = 'মোট পরিমাণ (লিটার):';
+            handleOilTypeChange();
         } else {
             oilBlock.style.display = 'none';
             inputLabel.innerText = 'মোট পরিমাণ (কেজি):';
+            document.getElementById('standard-results').style.display = 'block';
+            document.getElementById('oil-advanced-results').style.display = 'none';
         }
+    }
+
+    function handleOilTypeChange() {
+        const oilType = document.querySelector('input[name="oilType"]:checked').value;
+        const customInputBlock = document.getElementById('oil-custom-input-block');
+        
+        if (oilType === '2L') {
+            customInputBlock.style.display = 'block';
+        } else {
+            customInputBlock.style.display = 'none';
+            document.getElementById('user-2l-cartons').value = '';
+        }
+        calculate();
     }
 
     function calculate() {
         const product = document.getElementById('product').value;
         const amount = parseFloat(document.getElementById('amount').value) || 0;
         
-        let packWeight = 0;
-        let unit = "কেজি";
-        let packUnit = "বস্তা";
-
-        // পণ্যের ধরন অনুযায়ী বস্তা বা কার্টুনের ওজন নির্ধারণ
-        if (product === 'rice') { packWeight = 30; }
-        else if (product === 'flour') { packWeight = 40; }
-        else if (product === 'sugar') { packWeight = 25; }
-        else if (product === 'dal') { packWeight = 40; }
-        else if (product === 'oil') {
-            unit = "লিটার";
-            packUnit = "কার্টুন";
+        if (product !== 'oil') {
+            // সাধারণ পণ্যের হিসাব
+            document.getElementById('standard-results').style.display = 'block';
+            document.getElementById('oil-advanced-results').style.display = 'none';
             
-            // তেলের টাইপ চেক
-            const oilType = document.querySelector('input[name="oilType"]:checked').value;
-            if (oilType === '2L') {
-                packWeight = 18; // ২ লিটার হলে ১৮ লিটার কার্টুন
+            let packWeight = 30;
+            let unit = "কেজি";
+            let packUnit = "বস্তা";
+
+            if (product === 'flour') packWeight = 40;
+            else if (product === 'sugar') packWeight = 25;
+            else if (product === 'dal') packWeight = 40;
+
+            const fullPacks = Math.floor(amount / packWeight);
+            const remaining = amount % packWeight;
+
+            document.getElementById('res-pack-label').innerText = `পূর্ণ ${packUnit}:`;
+            document.getElementById('res-rem-label').innerText = `অবशिष्ट ${unit}:`;
+
+            if(amount > 0) {
+                document.getElementById('res-total').innerText = `${amount} ${unit}`;
+                document.getElementById('res-bags').innerText = `${fullPacks} ${packUnit}`;
+                document.getElementById('res-rem').innerText = `${remaining} ${unit}`;
             } else {
-                packWeight = 16; // ১ লিটার হলে ১৬ লিটার কার্টুন
+                document.getElementById('res-total').innerText = "-";
+                document.getElementById('res-bags').innerText = "-";
+                document.getElementById('res-rem').innerText = "-";
+            }
+        } else {
+            // তেলের জন্য স্পেশাল এডভান্সড হিসাব
+            document.getElementById('standard-results').style.display = 'none';
+            document.getElementById('oil-advanced-results').style.display = 'block';
+
+            const oilType = document.querySelector('input[name="oilType"]:checked').value;
+            
+            if (oilType === '2L') {
+                // ২ লিটার ভিত্তিক জটিল হিসাব
+                const max2LCartons = Math.floor(amount / 18);
+                document.getElementById('max-2l-hint').innerText = `(এই পরিমাণে সর্বোচ্চ ২ লিটারের ${max2LCartons} টি কার্টুন সম্ভব)`;
+                
+                let user2LCartons = parseInt(document.getElementById('user-2l-cartons').value);
+                if (isNaN(user2LCartons) || user2LCartons < 0) {
+                    user2LCartons = max2LCartons; // ফাকা থাকলে সর্বোচ্চটাই ধরে নিবে
+                } else if (user2LCartons > max2LCartons) {
+                    user2LCartons = max2LCartons; // সর্বোচ্চ সংখ্যার বেশি ইনপুট দিলে আটকে দিবে
+                    document.getElementById('user-2l-cartons').value = max2LCartons;
+                }
+
+                // ২ লিটার কার্টুন দেওয়ার পর বাকি লিটার বের করা
+                const oilUsedIn2L = user2LCartons * 18;
+                const remainingOilFor1L = amount - oilUsedIn2L;
+
+                // বাকি তেল দিয়ে ১ লিটারের কার্টুন (১৬ লিটার) এবং খুচরা বোতল হিসাব
+                const cartons1L = Math.floor(remainingOilFor1L / 16);
+                const finalRemainingLitres = remainingOilFor1L % 16;
+
+                if (amount > 0) {
+                    document.getElementById('oil-total').innerText = `${amount} লিটার`;
+                    document.getElementById('oil-2l-cartons').innerText = `${user2LCartons} কার্টুন (${user2LCartons * 9} বোতল)`;
+                    document.getElementById('oil-1l-cartons').innerText = `${cartons1L} কার্টুন`;
+                    document.getElementById('oil-rem-bottles').innerText = `${finalRemainingLitres} লিটার (বোতল)`;
+                } else {
+                    resetOilResults();
+                }
+            } else {
+                // শুধুমাত্র ১ লিটার সিলেক্ট করলে সাধারণ হিসাব (১৬ লিটার কার্টুন)
+                const cartons1L = Math.floor(amount / 16);
+                const finalRemainingLitres = amount % 16;
+
+                if (amount > 0) {
+                    document.getElementById('oil-total').innerText = `${amount} লিটার`;
+                    document.getElementById('oil-2l-cartons').innerText = `০ কার্টুন`;
+                    document.getElementById('oil-1l-cartons').innerText = `${cartons1L} কার্টুন`;
+                    document.getElementById('oil-rem-bottles').innerText = `${finalRemainingLitres} লিটার (বোতল)`;
+                } else {
+                    resetOilResults();
+                }
             }
         }
+    }
 
-        // মূল গাণিতিক হিসাব (ভাগফল ও ভাগশেষ)
-        const fullPacks = Math.floor(amount / packWeight);
-        const remaining = amount % packWeight;
-
-        // স্ক্রিনের টেক্সট ও লেবেল পরিবর্তন
-        document.getElementById('res-pack-label').innerText = `পূর্ণ ${packUnit}:`;
-        document.getElementById('res-rem-label').innerText = `অবশিষ্ট ${unit}:`;
-
-        // ফলাফল আপডেট
-        if(amount > 0) {
-            document.getElementById('res-total').innerText = `${amount} ${unit}`;
-            document.getElementById('res-bags').innerText = `${fullPacks} ${packUnit}`;
-            document.getElementById('res-rem').innerText = `${remaining} ${unit}`;
-        } else {
-            document.getElementById('res-total').innerText = "-";
-            document.getElementById('res-bags').innerText = "-";
-            document.getElementById('res-rem').innerText = "-";
-        }
+    function resetOilResults() {
+        document.getElementById('oil-total').innerText = "-";
+        document.getElementById('oil-2l-cartons').innerText = "-";
+        document.getElementById('oil-1l-cartons').innerText = "-";
+        document.getElementById('oil-rem-bottles').innerText = "-";
     }
 </script>
 
