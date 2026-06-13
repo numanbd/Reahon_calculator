@@ -15,13 +15,18 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-size: 20
+          node-version: 20
+
+      - name: Prepare Web Directory
+        run: |
+          mkdir www
+          cp index.html www/
 
       - name: Install Dependencies
         run: |
           npm init -y
           npm install @capacitor/core @capacitor/cli @capacitor/android
-          npx cap init "Ration Calculator" "com.ration.app" --web-dir=.
+          npx cap init "Ration Calculator" "com.ration.app" --web-dir=www
 
       - name: Add Android Platform
         run: |
