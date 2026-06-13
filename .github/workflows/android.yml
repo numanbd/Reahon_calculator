@@ -35,10 +35,10 @@ jobs:
           distribution: 'zulu'
           java-version: '21'
 
-      - name: Set Java 21 in Gradle
+      - name: Set Android SDK and Java Home
         run: |
-          echo "org.gradle.java.home=/usr/lib/jvm/zulu-21-amd64" >> android/gradle.properties
           echo "sdk.dir=$ANDROID_HOME" > android/local.properties
+          echo "org.gradle.java.home=$JAVA_HOME" >> android/gradle.properties
 
       - name: Grant Execute Permission for Gradle
         run: chmod +x android/gradlew
@@ -53,4 +53,3 @@ jobs:
         with:
           name: Ration-App-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
-          
