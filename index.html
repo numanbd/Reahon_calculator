@@ -29,6 +29,7 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             max-width: 480px;
             width: 100%;
+            position: relative;
         }
         h2 {
             text-align: center;
@@ -37,6 +38,15 @@
             font-size: 22px;
             border-bottom: 3px solid var(--accent);
             padding-bottom: 8px;
+        }
+        .settings-btn {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
         }
         .form-group { margin-bottom: 20px; }
         label {
@@ -89,21 +99,43 @@
         .oil-custom-box {
             background: #eff6ff; padding: 15px; border-radius: 8px; border: 1px solid #bfdbfe; margin-top: 10px;
         }
+        
+        /* সেটিং মোডাল স্টাইল */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center; align-items: center;
+            z-index: 100;
+        }
+        .modal-content {
+            background: white; padding: 20px; border-radius: 12px;
+            max-width: 400px; width: 90%; max-height: 85vh; overflow-y: auto;
+        }
+        .modal-title { font-weight: bold; font-size: 18px; margin-bottom: 15px; color: var(--primary); }
+        .btn-row { display: flex; gap: 10px; margin-top: 15px; }
+        .btn {
+            flex: 1; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;
+        }
+        .btn-save { background: var(--accent); color: white; }
+        .btn-close { background: #cbd5e1; color: var(--text); }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <button class="settings-btn" onclick="openSettings()">⚙️</button>
     <h2>রেশন বিতরণ ক্যালকুলেটর</h2>
     
     <div class="form-group">
         <label for="product">পণ্য নির্বাচন করুন:</label>
         <select id="product" onchange="toggleOilOptions(); calculate();">
-            <option value="rice">চাল (বস্তায় ৩০ কেজি)</option>
-            <option value="flour">আটা (বস্তায় ৪০ কেজি)</option>
-            <option value="oil">তৈল/তেল (লিটার)</option>
-            <option value="sugar">চিনি (বস্তায় ২৫ কেজি)</option>
-            <option value="dal">মুগ ডাল (বস্তায় ৪০ কেজি)</option>
+            <option value="rice" id="opt-rice">চাল (বস্তায় ৩০ কেজি)</option>
+            <option value="flour" id="opt-flour">আটা (বস্তায় ৪০ কেজি)</option>
+            <option value="oil" id="opt-oil">তৈল/তেল (লিটার)</option>
+            <option value="sugar" id="opt-sugar">চিনি (বস্তায় ২৫ কেজি)</option>
+            <option value="dal" id="opt-dal">মুগ ডাল (বস্তায় ৪০ কেজি)</option>
         </select>
     </div>
 
@@ -157,15 +189,15 @@
                 <span id="oil-total" class="highlight">-</span>
             </div>
             <div class="result-item">
-                <span>২ লিটার কার্টুন (১৮ লিঃ):</span>
+                <span>২ লিটার কার্টুন:</span>
                 <span id="oil-2l-cartons" class="highlight">-</span>
             </div>
             <div class="result-item">
-                <span>১ লিটার কার্টুন (১৬ লিঃ):</span>
+                <span>১ লিটার কার্টুন:</span>
                 <span id="oil-1l-cartons" class="highlight">-</span>
             </div>
             <div class="result-item">
-                <span>অবশিষ্ট খুচরা তেল:</span>
+                <span>অবशिष्ट খুচরা তেল:</span>
                 <span id="oil-rem-bottles" class="highlight">-</span>
             </div>
         </div>
@@ -174,7 +206,92 @@
     <div class="info-text">রেশন বিতরণ ব্যবস্থার স্বার্থে স্বয়ংক্রিয় গণনাকারী অ্যাপ।</div>
 </div>
 
+<div id="settingsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-title">ডিফল্ট ওজন সেটিংস (কেজি/লিটার)</div>
+        <div class="form-group">
+            <label>চাল প্রতি বস্তা:</label>
+            <input type="number" id="cfg-rice" value="30">
+        </div>
+        <div class="form-group">
+            <label>আটা প্রতি বস্তা:</label>
+            <input type="number" id="cfg-flour" value="40">
+        </div>
+        <div class="form-group">
+            <label>চিনি প্রতি বস্তা:</label>
+            <input type="number" id="cfg-sugar" value="25">
+        </div>
+        <div class="form-group">
+            <label>মুগ ডাল প্রতি বস্তা:</label>
+            <input type="number" id="cfg-dal" value="40">
+        </div>
+        <div class="form-group">
+            <label>তেল ২ লিটার কার্টুন (লিটার):</label>
+            <input type="number" id="cfg-oil2l" value="18">
+        </div>
+        <div class="form-group">
+            <label>তেল ১ লিটার কার্টুন (লিটার):</label>
+            <input type="number" id="cfg-oil1l" value="16">
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-save" onclick="saveSettings()">সেভ করুন</button>
+            <button class="btn btn-close" onclick="closeSettings()">বন্ধ করুন</button>
+        </div>
+    </div>
+</div>
+
 <script>
+    // ডিফল্ট কনফিগারেশন লোড (আগে সেভ করা থাকলে সেটা নিবে, নাহলে স্ট্যান্ডার্ড মান)
+    let config = {
+        rice: parseFloat(localStorage.getItem('cfg-rice')) || 30,
+        flour: parseFloat(localStorage.getItem('cfg-flour')) || 40,
+        sugar: parseFloat(localStorage.getItem('cfg-sugar')) || 25,
+        dal: parseFloat(localStorage.getItem('cfg-dal')) || 40,
+        oil2l: parseFloat(localStorage.getItem('cfg-oil2l')) || 18,
+        oil1l: parseFloat(localStorage.getItem('cfg-oil1l')) || 16
+    };
+
+    function updateDropdownLabels() {
+        document.getElementById('opt-rice').innerText = `চাল (বস্তায় ${config.rice} কেজি)`;
+        document.getElementById('opt-flour').innerText = `আটা (বস্তায় ${config.flour} কেজি)`;
+        document.getElementById('opt-sugar').innerText = `চিনি (বস্তায় ${config.sugar} কেজি)`;
+        document.getElementById('opt-dal').innerText = `মুগ ডাল (বস্তায় ${config.dal} কেজি)`;
+    }
+
+    function openSettings() {
+        document.getElementById('cfg-rice').value = config.rice;
+        document.getElementById('cfg-flour').value = config.flour;
+        document.getElementById('cfg-sugar').value = config.sugar;
+        document.getElementById('cfg-dal').value = config.dal;
+        document.getElementById('cfg-oil2l').value = config.oil2l;
+        document.getElementById('cfg-oil1l').value = config.oil1l;
+        document.getElementById('settingsModal').style.display = 'flex';
+    }
+
+    function closeSettings() {
+        document.getElementById('settingsModal').style.display = 'none';
+    }
+
+    function saveSettings() {
+        config.rice = parseFloat(document.getElementById('cfg-rice').value) || 30;
+        config.flour = parseFloat(document.getElementById('cfg-flour').value) || 40;
+        config.sugar = parseFloat(document.getElementById('cfg-sugar').value) || 25;
+        config.dal = parseFloat(document.getElementById('cfg-dal').value) || 40;
+        config.oil2l = parseFloat(document.getElementById('cfg-oil2l').value) || 18;
+        config.oil1l = parseFloat(document.getElementById('cfg-oil1l').value) || 16;
+
+        localStorage.setItem('cfg-rice', config.rice);
+        localStorage.setItem('cfg-flour', config.flour);
+        localStorage.setItem('cfg-sugar', config.sugar);
+        localStorage.setItem('cfg-dal', config.dal);
+        localStorage.setItem('cfg-oil2l', config.oil2l);
+        localStorage.setItem('cfg-oil1l', config.oil1l);
+
+        updateDropdownLabels();
+        closeSettings();
+        calculate();
+    }
+
     function toggleOilOptions() {
         const product = document.getElementById('product').value;
         const oilBlock = document.getElementById('oil-option-block');
@@ -195,7 +312,6 @@
     function handleOilTypeChange() {
         const oilType = document.querySelector('input[name="oilType"]:checked').value;
         const customInputBlock = document.getElementById('oil-custom-input-block');
-        
         if (oilType === '2L') {
             customInputBlock.style.display = 'block';
         } else {
@@ -210,17 +326,12 @@
         const amount = parseFloat(document.getElementById('amount').value) || 0;
         
         if (product !== 'oil') {
-            // সাধারণ পণ্যের হিসাব
             document.getElementById('standard-results').style.display = 'block';
             document.getElementById('oil-advanced-results').style.display = 'none';
             
-            let packWeight = 30;
+            let packWeight = config[product];
             let unit = "কেজি";
             let packUnit = "বস্তা";
-
-            if (product === 'flour') packWeight = 40;
-            else if (product === 'sugar') packWeight = 25;
-            else if (product === 'dal') packWeight = 40;
 
             const fullPacks = Math.floor(amount / packWeight);
             const remaining = amount % packWeight;
@@ -231,58 +342,49 @@
             if(amount > 0) {
                 document.getElementById('res-total').innerText = `${amount} ${unit}`;
                 document.getElementById('res-bags').innerText = `${fullPacks} ${packUnit}`;
-                document.getElementById('res-rem').innerText = `${remaining} ${unit}`;
+                document.getElementById('res-rem').innerText = `${remaining.toFixed(1)} ${unit}`;
             } else {
-                document.getElementById('res-total').innerText = "-";
-                document.getElementById('res-bags').innerText = "-";
-                document.getElementById('res-rem').innerText = "-";
+                resetStandardResults();
             }
         } else {
-            // তেলের জন্য স্পেশাল এডভান্সড হিসাব
             document.getElementById('standard-results').style.display = 'none';
             document.getElementById('oil-advanced-results').style.display = 'block';
-
             const oilType = document.querySelector('input[name="oilType"]:checked').value;
             
             if (oilType === '2L') {
-                // ২ লিটার ভিত্তিক জটিল হিসাব
-                const max2LCartons = Math.floor(amount / 18);
+                const max2LCartons = Math.floor(amount / config.oil2l);
                 document.getElementById('max-2l-hint').innerText = `(এই পরিমাণে সর্বোচ্চ ২ লিটারের ${max2LCartons} টি কার্টুন সম্ভব)`;
                 
                 let user2LCartons = parseInt(document.getElementById('user-2l-cartons').value);
                 if (isNaN(user2LCartons) || user2LCartons < 0) {
-                    user2LCartons = max2LCartons; // ফাকা থাকলে সর্বোচ্চটাই ধরে নিবে
+                    user2LCartons = max2LCartons;
                 } else if (user2LCartons > max2LCartons) {
-                    user2LCartons = max2LCartons; // সর্বোচ্চ সংখ্যার বেশি ইনপুট দিলে আটকে দিবে
+                    user2LCartons = max2LCartons;
                     document.getElementById('user-2l-cartons').value = max2LCartons;
                 }
 
-                // ২ লিটার কার্টুন দেওয়ার পর বাকি লিটার বের করা
-                const oilUsedIn2L = user2LCartons * 18;
+                const oilUsedIn2L = user2LCartons * config.oil2l;
                 const remainingOilFor1L = amount - oilUsedIn2L;
-
-                // বাকি তেল দিয়ে ১ লিটারের কার্টুন (১৬ লিটার) এবং খুচরা বোতল হিসাব
-                const cartons1L = Math.floor(remainingOilFor1L / 16);
-                const finalRemainingLitres = remainingOilFor1L % 16;
+                const cartons1L = Math.floor(remainingOilFor1L / config.oil1l);
+                const finalRemainingLitres = remainingOilFor1L % config.oil1l;
 
                 if (amount > 0) {
                     document.getElementById('oil-total').innerText = `${amount} লিটার`;
-                    document.getElementById('oil-2l-cartons').innerText = `${user2LCartons} কার্টুন (${user2LCartons * 9} বোতল)`;
+                    document.getElementById('oil-2l-cartons').innerText = `${user2LCartons} কার্টুন`;
                     document.getElementById('oil-1l-cartons').innerText = `${cartons1L} কার্টুন`;
-                    document.getElementById('oil-rem-bottles').innerText = `${finalRemainingLitres} লিটার (বোতল)`;
+                    document.getElementById('oil-rem-bottles').innerText = `${finalRemainingLitres.toFixed(1)} লিটার`;
                 } else {
                     resetOilResults();
                 }
             } else {
-                // শুধুমাত্র ১ লিটার সিলেক্ট করলে সাধারণ হিসাব (১৬ লিটার কার্টুন)
-                const cartons1L = Math.floor(amount / 16);
-                const finalRemainingLitres = amount % 16;
+                const cartons1L = Math.floor(amount / config.oil1l);
+                const finalRemainingLitres = amount % config.oil1l;
 
                 if (amount > 0) {
                     document.getElementById('oil-total').innerText = `${amount} লিটার`;
                     document.getElementById('oil-2l-cartons').innerText = `০ কার্টুন`;
                     document.getElementById('oil-1l-cartons').innerText = `${cartons1L} কার্টুন`;
-                    document.getElementById('oil-rem-bottles').innerText = `${finalRemainingLitres} লিটার (বোতল)`;
+                    document.getElementById('oil-rem-bottles').innerText = `${finalRemainingLitres.toFixed(1)} লিটার`;
                 } else {
                     resetOilResults();
                 }
@@ -290,13 +392,33 @@
         }
     }
 
+    function resetStandardResults() {
+        document.getElementById('res-total').innerText = "-";
+        document.getElementById('res-bags').innerText = "-";
+        document.getElementById('res-rem').innerText = "-";
+    }
     function resetOilResults() {
         document.getElementById('oil-total').innerText = "-";
         document.getElementById('oil-2l-cartons').innerText = "-";
         document.getElementById('oil-1l-cartons').innerText = "-";
         document.getElementById('oil-rem-bottles').innerText = "-";
     }
-</script>
 
+    // ব্যাক বাটন এক্সিট সমস্যা সমাধানের জন্য ক্যাপাসিটর লাইফসাইকেল লজিক
+    let backPressedOnce = false;
+    document.addEventListener('ionBackButton', (ev) => {
+        ev.detail.register(10, () => {
+            if (backPressedOnce) {
+                navigator.app.exitApp();
+            } else {
+                backPressedOnce = true;
+                alert("অ্যাপ থেকে বের হতে চাইলে আরেকবার ব্যাক বাটন চাপুন।");
+                setTimeout(() => { backPressedOnce = false; }, 2000);
+            }
+        });
+    });
+
+    window.onload = updateDropdownLabels;
+</script>
 </body>
 </html>
