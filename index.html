@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>রেশন বিতরণ ক্যালকুলেটর</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --accent: #10b981;
+            --bg: #f8fafc;
+            --text: #1e293b;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            max-width: 480px;
+            width: 100%;
+        }
+        h2 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 22px;
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #475569;
+        }
+        select, input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            color: var(--text);
+            background-color: #fff;
+            transition: border-color 0.2s;
+        }
+        select:focus, input[type="number"]:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+        .radio-box {
+            background: #f1f5f9;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 5px;
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        .radio-group input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+        }
+        .result-box {
+            margin-top: 25px;
+            background: #f0fdf4;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #bbf7d0;
+        }
+        .result-title {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed #cbd5e1;
+            font-size: 16px;
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        .highlight {
+            font-weight: 700;
+            color: #047857;
+        }
+        .info-text {
+            font-size: 12px;
+            color: #64748b;
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>রেশন বিতরণ ক্যালকুলেটর</h2>
+    
+    <div class="form-group">
+        <label for="product">পণ্য নির্বাচন করুন:</label>
+        <select id="product" onchange="toggleOilOptions(); calculate();">
+            <option value="rice">চাল (বস্তায় ৩০ কেজি)</option>
+            <option value="flour">আটা (বস্তায় ৪০ কেজি)</option>
+            <option value="oil">তৈল/তেল (লিটার)</option>
+            <option value="sugar">চিনি (বস্তায় ২৫ কেজি)</option>
+            <option value="dal">মুগ ডাল (বস্তায় ৪০ কেজি)</option>
+        </select>
+    </div>
+
+    <div class="form-group" id="oil-option-block" style="display: none;">
+        <label>কার্টুনের ধরন সিলেক্ট করুন:</label>
+        <div class="radio-box">
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="oilType" value="2L" checked onchange="calculate()"> 
+                    ২ লিটার বোতল (১৮ লিটার অর্থাৎ ৯ বোতল কার্টুন)
+                </label>
+                <label>
+                    <input type="radio" name="oilType" value="1L" onchange="calculate()"> 
+                    ১ লিটার বোতল (১৬ লিটার কার্টুন)
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label id="input-label" for="amount">মোট পরিমাণ (কেজি):</label>
+        <input type="number" id="amount" placeholder="এখানে মোট সংখ্যাটি লিখুন" min="0" oninput="calculate()">
+    </div>
+
+    <div class="result-box">
+        <div class="result-title">হিসাবের ফলাফল:</div>
+        <div class="result-item">
+            <span>মোট পরিমাণ:</span>
+            <span id="res-total" class="highlight">-</span>
+        </div>
+        <div class="result-item">
+            <span id="res-pack-label">পূর্ণ বস্তা:</span>
+            <span id="res-bags" class="highlight">-</span>
+        </div>
+        <div class="result-item">
+            <span id="res-rem-label">অবশিষ্ট কেজি:</span>
+            <span id="res-rem" class="highlight">-</span>
+        </div>
+    </div>
+    
+    <div class="info-text">রেশন বিতরণ ব্যবস্থার স্বার্থে স্বয়ংক্রিয় গণনাকারী অ্যাপ।</div>
+</div>
+
+<script>
+    function toggleOilOptions() {
+        const product = document.getElementById('product').value;
+        const oilBlock = document.getElementById('oil-option-block');
+        const inputLabel = document.getElementById('input-label');
+        
+        if (product === 'oil') {
+            oilBlock.style.display = 'block';
+            inputLabel.innerText = 'মোট পরিমাণ (লিটার):';
+        } else {
+            oilBlock.style.display = 'none';
+            inputLabel.innerText = 'মোট পরিমাণ (কেজি):';
+        }
+    }
+
+    function calculate() {
+        const product = document.getElementById('product').value;
+        const amount = parseFloat(document.getElementById('amount').value) || 0;
+        
+        let packWeight = 0;
+        let unit = "কেজি";
+        let packUnit = "বস্তা";
+
+        // পণ্যের ধরন অনুযায়ী বস্তা বা কার্টুনের ওজন নির্ধারণ
+        if (product === 'rice') { packWeight = 30; }
+        else if (product === 'flour') { packWeight = 40; }
+        else if (product === 'sugar') { packWeight = 25; }
+        else if (product === 'dal') { packWeight = 40; }
+        else if (product === 'oil') {
+            unit = "লিটার";
+            packUnit = "কার্টুন";
+            
+            // তেলের টাইপ চেক
+            const oilType = document.querySelector('input[name="oilType"]:checked').value;
+            if (oilType === '2L') {
+                packWeight = 18; // ২ লিটার হলে ১৮ লিটার কার্টুন
+            } else {
+                packWeight = 16; // ১ লিটার হলে ১৬ লিটার কার্টুন
+            }
+        }
+
+        // মূল গাণিতিক হিসাব (ভাগফল ও ভাগশেষ)
+        const fullPacks = Math.floor(amount / packWeight);
+        const remaining = amount % packWeight;
+
+        // স্ক্রিনের টেক্সট ও লেবেল পরিবর্তন
+        document.getElementById('res-pack-label').innerText = `পূর্ণ ${packUnit}:`;
+        document.getElementById('res-rem-label').innerText = `অবশিষ্ট ${unit}:`;
+
+        // ফলাফল আপডেট
+        if(amount > 0) {
+            document.getElementById('res-total').innerText = `${amount} ${unit}`;
+            document.getElementById('res-bags').innerText = `${fullPacks} ${packUnit}`;
+            document.getElementById('res-rem').innerText = `${remaining} ${unit}`;
+        } else {
+            document.getElementById('res-total').innerText = "-";
+            document.getElementById('res-bags').innerText = "-";
+            document.getElementById('res-rem').innerText = "-";
+        }
+    }
+</script>
+
+</body>
+</html>
